@@ -28,11 +28,11 @@
     NSString* onDiscoverCallbackId;
 }
 
-@property (strong, nonatomic) NSMutableArray *peripherals;
 @property (strong, nonatomic) CBCentralManager *manager;
 @property (strong, nonatomic) CBPeripheral *activePeripheral;
 
-- (void) scan:(CDVInvokedUrlCommand *)command;
+- (void) startScan:(CDVInvokedUrlCommand *)command;
+- (void) stopScan:(CDVInvokedUrlCommand *)command;
 
 - (void) connect:(CDVInvokedUrlCommand *)command;
 - (void) disconnect:(CDVInvokedUrlCommand *)command;

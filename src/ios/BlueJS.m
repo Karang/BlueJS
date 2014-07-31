@@ -35,15 +35,14 @@ CBCharacteristic *send_characteristic;
 CBCharacteristic *disconnect_characteristic;
 
 - (void) pluginInitialize {
-    NSLog("BlueJS v0.0.1");
-    NSLog("(c) 2014 Arthur Hennequin (Karang)");
+    NSLog(@"BlueJS v0.0.1");
+    NSLog(@"(c) 2014 Arthur Hennequin (Karang)");
     
     [super pluginInitialize];
     
-    peripherals = [NSMutableArray array];
-    
     // RFduino services
     service_uuid = [CBUUID UUIDWithString:@"2220"];
+    
     receive_characteristic_uuid = [CBUUID UUIDWithString:@"2221"];
     send_characteristic_uuid = [CBUUID UUIDWithString:@"2222"];
     disconnect_characteristic_uuid = [CBUUID UUIDWithString:@"2223"];
@@ -55,46 +54,120 @@ CBCharacteristic *disconnect_characteristic;
 
 #pragma mark - Plugin methods
 
-- (void) scan:(CDVInvokedUrlCommand *)command {
-    NSLog("Scan");
+- (void) startScan:(CDVInvokedUrlCommand *)command {
+    NSLog(@"Scan");
+    
+    onDiscoverCallbackId = [command.callbackId copy];
+    
+    NSDictionary *opt = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:CBCentralManagerScanOptionAllowDuplicatesKey];
+    [manager scanForPeripheralsWithServices:[NSArray arrayWithObject:service_uuid] options:opt];
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    [pluginResult setKeepCallbackAsBool:TRUE];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) stopScan:(CDVInvokedUrlCommand *)command {
+    NSLog(@"Stop scan");
+    
+    [manager stopScan];
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    [pluginResult setKeepCallbackAsBool:TRUE];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) connect:(CDVInvokedUrlCommand *)command {
-    NSLog("Connect");
+    NSLog(@"Connect");
+    
+    NSString* uuid_string = [command.arguments objectAtIndex:0];
+    CBUUID *device_uuid = [CBUUID UUIDWithString:uuid_string];
+    CBPeripheral *device = [[manager retrievePeripheralsWithIdentifiers:[NSArray arrayWithObject:device_uuid]] objectAtIndex:0];
+    
+    if (device) {
+        NSLog(@"Connecting to peripheral with UUID : %@", uuid_string);
+
+        [manager stopScan];
+        
+        onConnectCallbackId = [command.callbackId copy];
+        [manager connectPeripheral:peripheral options:nil];
+        
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+        [pluginResult setKeepCallbackAsBool:TRUE];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        NSLog(@"Peripheral not found");
+    }
 }
 
 - (void) disconnect:(CDVInvokedUrlCommand *)command {
-    NSLog("Disconnect");
+    NSLog(@"Disconnect");
+    
+    if (activePeripheral) {
+        [activePeripheral writeValue:[NSData data] forCharacteristic:disconnect_characteristic type:CBCharacteristicWriteWithoutResponse];
+        
+        if (activePeripheral.isConnected) {
+            [manager cancelPeripheralConnection:activePeripheral];
+        }
+    }
+    
+    onConnectCallbackId = nil;
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) listenToData:(CDVInvokedUrlCommand *)command {
-    NSLog("Listen to data");
+    NSLog(@"Listen to data");
+    
+    onDataCallbackId = [command.callbackId copy];
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    [pluginResult setKeepCallbackAsBool:TRUE];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) write:(CDVInvokedUrlCommand *)command {
-    NSLog("Write");
+    NSLog(@"Write");
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    [pluginResult setKeepCallbackAsBool:TRUE];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 #pragma mark - CBCentralManagerDelegate
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
+    NSLog(@"Peripheral discovered");
     
+    NSString *uuidString = ([peripheral identifier])?((__bridge_transfer NSString *)CFUUIDCreateString(NULL, peripheral.identifier)):@"";
+    NSMutableDictionary *res = [NSMutableDictionary dictionary];
+    [res setObject: uuidString forKey: @"uuid"];]
+    [res setObject: [peripheral name] forKey: @"name"];
+    [res setObject: RSSI forKey: @"rssi"];
+    [res setObject: advertisementData forKey: @"advertisementData"];
+    
+    if (onDiscoverCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:res];
+        [pluginResult setKeepCallbackAsBool:TRUE];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:onDiscoverCallbackId];
+    }
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    
+    NSLog(@"CoreBluetooth Central Manager changed state: %d", central.state);
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    
+    NSLog(@"Connected to peripheral");
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    
+    NSLog(@"Disconnected from peripheral");
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    
+    NSLog(@"Unable to connect to peripheral");
 }
 
 #pragma mark - CBPeripheralDelegate

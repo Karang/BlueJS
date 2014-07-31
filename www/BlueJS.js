@@ -15,8 +15,12 @@
 'use strict';
 
 module.exports = {
-    scan: function(onDiscover, onError) {
-        cordova.exec(onDiscover, onError, "BlueJS", "scan", []);
+    startScan: function(onDiscover, onError) {
+        cordova.exec(onDiscover, onError, "BlueJS", "startScan", []);
+    },
+    
+    stopScan: function() {
+        cordova.exec(function(){}, function(error){}, "BlueJS", "stopScan", []);
     },
     
     connect: function(uuid, onSuccess, onError) {
