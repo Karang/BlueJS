@@ -76,16 +76,6 @@ CBCharacteristic *disconnect_characteristic;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void) listenToDeviceUpdate:(CDVInvokedUrlCommand *)command {
-    NSLog(@"Listen to device update");
-    
-    onDeviceUpdateCallbackId = [command.callbackId copy];
-    
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
-    [pluginResult setKeepCallbackAsBool:TRUE];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
 - (void) connect:(CDVInvokedUrlCommand *)command {
     NSLog(@"Connect");
     
