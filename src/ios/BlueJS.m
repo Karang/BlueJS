@@ -22,7 +22,6 @@
 @implementation BlueJS
 
 @synthesize manager;
-@synthesize peripherals;
 @synthesize activePeripheral;
 
 CBUUID *service_uuid;
@@ -71,6 +70,16 @@ CBCharacteristic *disconnect_characteristic;
     NSLog(@"Stop scan");
     
     [manager stopScan];
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    [pluginResult setKeepCallbackAsBool:TRUE];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) listenToDeviceUpdate:(CDVInvokedUrlCommand *)command {
+    NSLog(@"Listen to device update");
+    
+    onDeviceUpdateCallbackId = [command.callbackId copy];
     
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
     [pluginResult setKeepCallbackAsBool:TRUE];

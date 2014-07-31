@@ -19,6 +19,11 @@ module.exports = {
         cordova.exec(onDiscover, onError, "BlueJS", "startScan", []);
     },
     
+    listenToDeviceUpdate: function(onDeviceUpdate, onError, period) {
+        period = (period) ? period : 1;
+        cordova.exec(onDeviceUpdate, onError, "BlueJS", "listenToDeviceUpdate", [period]); 
+    },
+    
     stopScan: function() {
         cordova.exec(function(){}, function(error){}, "BlueJS", "stopScan", []);
     },
@@ -32,7 +37,7 @@ module.exports = {
     },
     
     listenToData: function(onData, onError) {
-        cordova.exec(onData, onError, "BlueJS", "data", []);
+        cordova.exec(onData, onError, "BlueJS", "listenToData", []);
     },
     
     write: function(data, onSuccess, onError) {

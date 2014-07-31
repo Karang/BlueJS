@@ -26,6 +26,7 @@
     NSString* onConnectCallbackId;
     NSString* onDataCallbackId;
     NSString* onDiscoverCallbackId;
+    NSString* onDeviceUpdateCallbackId;
 }
 
 @property (strong, nonatomic) CBCentralManager *manager;
@@ -33,6 +34,7 @@
 
 - (void) startScan:(CDVInvokedUrlCommand *)command;
 - (void) stopScan:(CDVInvokedUrlCommand *)command;
+- (void) listenToDeviceUpdate:(CDVInvokedUrlCommand *)command;
 
 - (void) connect:(CDVInvokedUrlCommand *)command;
 - (void) disconnect:(CDVInvokedUrlCommand *)command;
