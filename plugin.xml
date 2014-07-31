@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin
+    xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="fr.karang.bluejs"
+    version="0.0.1">
+
+    <name>BlueJS</name>
+    <description>Cordova Plugin for nrf51822 modules</description>
+    <license>Apache 2.0</license>
+    <keywords>bluetooth, arduino, rfduino, nrf51822</keywords>
+    <repo>https://github.com/Karang/BlueJS.git</repo>
+    <issue>https://github.com/Karang/BlueJS/issues</issue>
+
+    <engines>
+        <engine name="cordova" version=">=3.1.0" />
+    </engines>
+
+    <js-module src="www/BlueJS.js" name="BlueJS">
+        <clobbers target="BlueJS" />
+    </js-module>
+
+    <platform name="ios">
+        <config-file target="config.xml" parent="/widget">
+            <feature name="BlueJS">
+                <param name="ios-package" value="BlueJS" onload="true"/>
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/BlueJS.h" target-dir="BlueJS" />
+        <source-file src="src/ios/BlueJS.m" target-dir="BlueJS" />
+
+        <!--<header-file src="src/ios/CBPeripheral+Extensions.h" target-dir="BlueJS" />
+        <source-file src="src/ios/CBPeripheral+Extensions.m" target-dir="BlueJS" />-->
+
+        <!-- frameworks -->
+        <framework src="CoreBluetooth.framework" />
+    </platform>
+
+    <!--
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/widget">
+            <feature name="BlueJS">
+                <param name="android-package" value="fr.karang.bluejs.BlueJSPlugin"/>
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.BLUETOOTH"/>
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+            <uses-sdk android:minSdkVersion="18" android:targetSdkVersion="19" />            
+        </config-file>
+
+        <source-file src="src/android/fr/karang/bluejs/BlueJSPlugin.java"
+            target-dir="src/fr/karang/bluejs"/>
+        <source-file src="src/android/fr/karang/bluejs/Peripheral.java"
+            target-dir="src/fr/karang/bluejs"/>
+    </platform>-->
+</plugin>
