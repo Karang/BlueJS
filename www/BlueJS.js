@@ -23,12 +23,12 @@ module.exports = {
         cordova.exec(onSuccess, onError, "BlueJS", "connect", [uuid]);
     },
     
-    listenToData: function(onData, onError) {
-        cordova.exec(onData, onError, "BlueJS", "data", []);
-    },
-    
     disconnect: function(onSuccess, onError) {
         cordova.exec(onSuccess, onError, "BlueJS", "disconnect", []);
+    },
+    
+    listenToData: function(onData, onError) {
+        cordova.exec(onData, onError, "BlueJS", "data", []);
     },
     
     write: function(data, onSuccess, onError) {
