@@ -137,14 +137,22 @@ CBCharacteristic *disconnect_characteristic;
 #pragma mark - CBCentralManagerDelegate
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
-    NSLog(@"Peripheral discovered");
-    
-    NSString *uuidString = ([peripheral identifier])?[peripheral.identifier UUIDString]:@"";
+    NSString *uuidString = ([peripheral identifier])?[[peripheral identifier] UUIDString]:@"";
+    NSString *advertisementString = @"";
+    if (advertisementData) {
+        id manufacturerData = [advertisementData objectForKey:CBAdvertisementDataManufacturerDataKey];
+        if (manufacturerData) {
+            const uint8_t *bytes = [manufacturerData bytes];
+            unsigned long len = [manufacturerData length];
+            NSData *data = [NSData dataWithBytes:bytes+2 length:len-2];
+            advertisementString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        }
+    }
     NSMutableDictionary *res = [NSMutableDictionary dictionary];
     [res setObject: uuidString forKey: @"uuid"];
     [res setObject: [peripheral name] forKey: @"name"];
     [res setObject: RSSI forKey: @"rssi"];
-    [res setObject: advertisementData forKey: @"advertisementData"];
+    [res setObject: advertisementString forKey: @"advertisement"];
     
     if (onDiscoverCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:res];
@@ -154,7 +162,7 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    NSLog(@"CoreBluetooth Central Manager changed state: %d", central.state);
+    NSLog(@"CoreBluetooth Central Manager changed state: %ld", central.state);
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
