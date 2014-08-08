@@ -40,6 +40,8 @@
 - (void) listenToData:(CDVInvokedUrlCommand *)command;
 - (void) write:(CDVInvokedUrlCommand *)command;
 
+- (NSString *) centralManagerStateToString:(CBCentralManagerState)state;
+
 @end
 
 #endif

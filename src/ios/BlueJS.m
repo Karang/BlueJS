@@ -162,7 +162,7 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    NSLog(@"CoreBluetooth Central Manager changed state: %ld", central.state);
+    NSLog(@"CoreBluetooth Central Manager changed state: %ld (%@)", [central state], [self centralManagerStateToString:[central state]]);
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
@@ -189,6 +189,29 @@ CBCharacteristic *disconnect_characteristic;
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     
+}
+
+#pragma mark - Utils
+
+- (NSString *) centralManagerStateToString:(CBCentralManagerState)state {
+    switch (state) {
+        case CBCentralManagerStateUnknown:
+            return @"State unknown (CBCentralManagerStateUnknown)";
+        case CBCentralManagerStateResetting:
+            return @"State resetting (CBCentralManagerStateUnknown)";
+        case CBCentralManagerStateUnsupported:
+            return @"State BLE unsupported (CBCentralManagerStateResetting)";
+        case CBCentralManagerStateUnauthorized:
+            return @"State unauthorized (CBCentralManagerStateUnauthorized)";
+        case CBCentralManagerStatePoweredOff:
+            return @"State BLE powered off (CBCentralManagerStatePoweredOff)";
+        case CBCentralManagerStatePoweredOn:
+            return @"State powered up and ready (CBCentralManagerStatePoweredOn)";
+        default:
+            return @"State unknown";
+    }
+    
+    return @"Unknown state";
 }
 
 @end
