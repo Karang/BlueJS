@@ -89,7 +89,7 @@ CBCharacteristic *disconnect_characteristic;
         [manager stopScan];
         
         onConnectCallbackId = [command.callbackId copy];
-        [manager connectPeripheral:peripheral options:nil];
+        [manager connectPeripheral:device options:nil];
         
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
         [pluginResult setKeepCallbackAsBool:TRUE];
@@ -139,9 +139,9 @@ CBCharacteristic *disconnect_characteristic;
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
     NSLog(@"Peripheral discovered");
     
-    NSString *uuidString = ([peripheral identifier])?((__bridge_transfer NSString *)CFUUIDCreateString(NULL, peripheral.identifier)):@"";
+    NSString *uuidString = ([peripheral identifier])?[peripheral.identifier UUIDString]:@"";
     NSMutableDictionary *res = [NSMutableDictionary dictionary];
-    [res setObject: uuidString forKey: @"uuid"];]
+    [res setObject: uuidString forKey: @"uuid"];
     [res setObject: [peripheral name] forKey: @"name"];
     [res setObject: RSSI forKey: @"rssi"];
     [res setObject: advertisementData forKey: @"advertisementData"];
