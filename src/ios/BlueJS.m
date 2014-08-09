@@ -180,15 +180,37 @@ CBCharacteristic *disconnect_characteristic;
 #pragma mark - CBPeripheralDelegate
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
-    
+    for (CBService *service in [peripheral services]) {
+        if ([service.UUID isEqual:service_uuid]) {
+            [peripheral discoverCharacteristics:characteristics forService:service];
+        }
+    }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
-    
+    if  ([service.UUID isEqual:service_uuid]) {
+        for (CBCharacteristic *characteristic in [service characteristics]) {
+            if ([characteristic.UUID isEqual:send_characteristic_uuid]) {
+                send_characteristic = characteristic;
+            } else if ([characteristic.UUID isEqual:receive_characteristic_uuid]) {
+                [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+            } else if ([characteristic.UUID isEqual:disconnect_characteristic_uuid]) {
+                disconnect_characteristic = characteristic;
+            }
+        }
+    }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    
+    if ([characteristic.UUID isEqual:receive_characteristic_uuid]) {
+        if (onDataCallbackId) {
+            NSData*data = [characteristic value];
+            
+            CDVPluginResult*pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
+            [pluginResult setKeepCallbackAsBool:TRUE];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:onDataCallbackId];
+        }
+    }
 }
 
 #pragma mark - Utils
