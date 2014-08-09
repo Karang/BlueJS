@@ -261,8 +261,8 @@ CBCharacteristic *disconnect_characteristic;
     
     if (onRSSICallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[peripheral.RSSI intValue]];
-        [pluginResult setKeepCallbackAsBool:TRUE];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:onRSSICallbackId];
+        onRSSICallbackId = nil;
     }
 }
 
