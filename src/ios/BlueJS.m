@@ -191,6 +191,11 @@ CBCharacteristic *disconnect_characteristic;
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     NSLog(@"Unable to connect to peripheral");
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"FAILED TO CONNECT"];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:onConnectCallbackId];
+    
+    onConnectCallbackId = nil;
 }
 
 #pragma mark - CBPeripheralDelegate
