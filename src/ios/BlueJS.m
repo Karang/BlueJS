@@ -167,10 +167,26 @@ CBCharacteristic *disconnect_characteristic;
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     NSLog(@"Connected to peripheral");
+    
+    [peripheral setDelegate:self];
+    self.activePeripheral = peripheral;
+    
+    [peripheral discoverServices:[NSArray arrayWithObject:service_uuid]];
+    
+    if (onConnectCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [pluginResult setKeepCallbackAsBool:TRUE];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:onConnectCallbackId];
+    }
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     NSLog(@"Disconnected from peripheral");
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"DISCONNECTED"];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:onConnectCallbackId];
+    
+    onConnectCallbackId = nil;
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
