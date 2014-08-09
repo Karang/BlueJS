@@ -35,6 +35,10 @@ module.exports = {
         cordova.exec(onData, onError, "BlueJS", "listenToData", []);
     },
     
+    readRSSI: function(onRSSI, onError) {
+        cordova.exec(onRSSI, onError, "BlueJS", "readRSSI", []);
+    },
+    
     write: function(data, onSuccess, onError) {
         cordova.exec(onSuccess, onError, "BlueJS", "write", []);
     }

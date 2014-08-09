@@ -26,6 +26,7 @@
     NSString* onConnectCallbackId;
     NSString* onDataCallbackId;
     NSString* onDiscoverCallbackId;
+    NSString* onRSSICallbackId;
 }
 
 @property (strong, nonatomic) CBCentralManager *manager;
@@ -39,6 +40,7 @@
 - (void) disconnect:(CDVInvokedUrlCommand *)command;
 
 - (void) listenToData:(CDVInvokedUrlCommand *)command;
+- (void) readRSSI:(CDVInvokedUrlCommand *)command;
 - (void) write:(CDVInvokedUrlCommand *)command;
 
 - (NSString *) centralManagerStateToString:(CBCentralManagerState)state;
