@@ -85,7 +85,7 @@ CBCharacteristic *disconnect_characteristic;
     if (device) {
         NSLog(@"Connecting to peripheral with UUID : %@", uuid_string);
 
-        //[manager stopScan];
+        [manager stopScan];
         
         onConnectCallbackId = [command.callbackId copy];
         
