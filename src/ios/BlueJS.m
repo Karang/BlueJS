@@ -23,6 +23,7 @@
 
 @synthesize manager;
 @synthesize activePeripheral;
+@synthesize connectingPeripheral;
 
 CBUUID *service_uuid;
 CBUUID *send_characteristic_uuid;
@@ -86,16 +87,20 @@ CBCharacteristic *disconnect_characteristic;
     if (device) {
         NSLog(@"Connecting to peripheral with UUID : %@", uuid_string);
 
-        [manager stopScan];
+        //[manager stopScan];
         
         onConnectCallbackId = [command.callbackId copy];
-        [manager connectPeripheral:device options:nil];
         
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
         [pluginResult setKeepCallbackAsBool:TRUE];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        
+        [manager connectPeripheral:device options:nil];
+        self.connectingPeripheral = device;
     } else {
         NSLog(@"Peripheral not found");
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"DEVICE NOT FOUND"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }
 }
 

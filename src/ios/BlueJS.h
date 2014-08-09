@@ -30,6 +30,7 @@
 
 @property (strong, nonatomic) CBCentralManager *manager;
 @property (strong, nonatomic) CBPeripheral *activePeripheral;
+@property (strong, nonatomic) CBPeripheral *connectingPeripheral;
 
 - (void) startScan:(CDVInvokedUrlCommand *)command;
 - (void) stopScan:(CDVInvokedUrlCommand *)command;
