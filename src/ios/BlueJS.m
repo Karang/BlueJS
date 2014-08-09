@@ -78,8 +78,6 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void) connect:(CDVInvokedUrlCommand *)command {
-    NSLog(@"Connect");
-    
     NSString* uuid_string = [command.arguments objectAtIndex:0];
     CBUUID *device_uuid = [CBUUID UUIDWithString:uuid_string];
     CBPeripheral *device = [[manager retrievePeripheralsWithIdentifiers:[NSArray arrayWithObject:device_uuid]] objectAtIndex:0];
@@ -167,13 +165,13 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    NSLog(@"CoreBluetooth Central Manager changed state: %ld (%@)", [central state], [self centralManagerStateToString:[central state]]);
+    NSLog(@"CoreBluetooth Central Manager changed state: %d (%@)", (int)[central state], [self centralManagerStateToString:[central state]]);
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     NSLog(@"Connected to peripheral");
     
-    [peripheral setDelegate:self];
+    peripheral.delegate = self;
     self.activePeripheral = peripheral;
     
     [peripheral discoverServices:[NSArray arrayWithObject:service_uuid]];
