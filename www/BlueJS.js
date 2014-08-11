@@ -40,6 +40,6 @@ module.exports = {
     },
     
     write: function(data, onSuccess, onError) {
-        cordova.exec(onSuccess, onError, "BlueJS", "write", []);
+        cordova.exec(onSuccess, onError, "BlueJS", "write", [data]);
     }
 };
