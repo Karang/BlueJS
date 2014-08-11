@@ -196,12 +196,6 @@ CBCharacteristic *disconnect_characteristic;
     self.activePeripheral = peripheral;
     
     [peripheral discoverServices:[NSArray arrayWithObject:service_uuid]];
-    
-    if (onConnectCallbackId) {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [pluginResult setKeepCallbackAsBool:TRUE];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:onConnectCallbackId];
-    }
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
@@ -242,6 +236,12 @@ CBCharacteristic *disconnect_characteristic;
             } else if ([characteristic.UUID isEqual:disconnect_characteristic_uuid]) {
                 disconnect_characteristic = characteristic;
             }
+        }
+        
+        if (onConnectCallbackId) {
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            [pluginResult setKeepCallbackAsBool:TRUE];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:onConnectCallbackId];
         }
     }
 }
