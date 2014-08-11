@@ -130,8 +130,6 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void) readRSSI:(CDVInvokedUrlCommand *)command {
-    NSLog(@"Read RSSI");
-    
     if (activePeripheral && activePeripheral.isConnected) {
         onRSSICallbackId = [command.callbackId copy];
         
@@ -261,8 +259,6 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
-    NSLog(@"Peripheral updated RSSI: %@ dbm", peripheral.RSSI);
-    
     if (onRSSICallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[peripheral.RSSI intValue]];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:onRSSICallbackId];
