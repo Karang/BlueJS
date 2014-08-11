@@ -149,7 +149,11 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void) write:(CDVInvokedUrlCommand *)command {
-    NSLog(@"Write");
+    NSData * data = [command.arguments objectAtIndex:0];
+    
+    if (data != nil) {
+        [activePeripheral writeValue:data forCharacteristic:send_characteristic type:CBCharacteristicWriteWithoutResponse];
+    }
     
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
     [pluginResult setKeepCallbackAsBool:TRUE];
