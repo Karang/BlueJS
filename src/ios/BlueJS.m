@@ -133,11 +133,11 @@ CBCharacteristic *disconnect_characteristic;
     if (activePeripheral && activePeripheral.isConnected) {
         onRSSICallbackId = [command.callbackId copy];
         
-        [activePeripheral readRSSI];
-        
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
         [pluginResult setKeepCallbackAsBool:TRUE];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        
+        [activePeripheral readRSSI];
     } else {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"NOT CONNECTED"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
