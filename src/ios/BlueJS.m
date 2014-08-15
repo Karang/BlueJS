@@ -131,13 +131,15 @@ CBCharacteristic *disconnect_characteristic;
 
 - (void) readRSSI:(CDVInvokedUrlCommand *)command {
     if (activePeripheral && activePeripheral.isConnected) {
-        onRSSICallbackId = [command.callbackId copy];
-        
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
-        [pluginResult setKeepCallbackAsBool:TRUE];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        
-        [activePeripheral readRSSI];
+        if (onRSSICallbackId == nil) {
+            onRSSICallbackId = [command.callbackId copy];
+            
+            [activePeripheral readRSSI];
+            
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+            [pluginResult setKeepCallbackAsBool:TRUE];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
     } else {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"NOT CONNECTED"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -259,6 +261,8 @@ CBCharacteristic *disconnect_characteristic;
 }
 
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
+    //NSLog(@"RSSI: %@", peripheral.RSSI);
+    
     if (onRSSICallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[peripheral.RSSI intValue]];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:onRSSICallbackId];

@@ -30,9 +30,6 @@
         <header-file src="src/ios/BlueJS.h" target-dir="BlueJS" />
         <source-file src="src/ios/BlueJS.m" target-dir="BlueJS" />
 
-        <!--<header-file src="src/ios/CBPeripheral+Extensions.h" target-dir="BlueJS" />
-        <source-file src="src/ios/CBPeripheral+Extensions.m" target-dir="BlueJS" />-->
-
         <!-- frameworks -->
         <framework src="CoreBluetooth.framework" />
     </platform>
